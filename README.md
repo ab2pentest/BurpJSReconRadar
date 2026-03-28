@@ -30,6 +30,8 @@ Works on **both Burp Suite Community and Professional editions**.
 
 ### UI & Workflow
 
+<img width="1897" height="895" alt="image" src="https://github.com/user-attachments/assets/f48e1d4d-de02-4584-b034-73c599dd8e92" />
+
 - **Custom Tab** with sortable results table
 - **Severity Color Coding** - CRITICAL (red), HIGH (orange), MEDIUM (yellow), INFO (gray)
 - **Severity Filter Toggles** - Click to show/hide CRITICAL, HIGH, MEDIUM, INFO
