@@ -1527,6 +1527,101 @@ class BurpExtender(IBurpExtender, IScannerCheck, IHttpListener, ITab):
         ('azure_openai_key', '(?i)(?:azure[_-]?openai|openai[_-]?azure)[a-zA-Z0-9_]*(?:key|secret)\\s*[=:]\\s*[\\x22\\x27]([a-f0-9]{32})[\\x22\\x27]'),
         ('pypi_token', r'pypi-[a-zA-Z0-9_\-]{50,}'),
 
+        # === WEBHOOK URLS ===
+        ('slack_webhook', r'https://hooks\.slack\.com/services/T[A-Z0-9]{8,}/B[A-Z0-9]{8,}/[a-zA-Z0-9]{20,}'),
+        ('teams_webhook', r'https://[a-zA-Z0-9\-]+\.webhook\.office\.com/webhookb2/[a-f0-9\-]+/IncomingWebhook/[a-zA-Z0-9]+/[a-f0-9\-]+'),
+        ('mattermost_webhook', r'https://[a-zA-Z0-9\-\.]+/hooks/[a-z0-9]{26}'),
+        ('stripe_webhook_secret', r'whsec_[0-9a-zA-Z]{32,}'),
+
+        # === DISTINCTIVE PREFIX TOKENS (2024-2025) ===
+        ('pplx_api_key', r'pplx-[a-f0-9]{48}'),
+        ('dckr_pat', r'dckr_pat_[a-zA-Z0-9_\-]{40,}'),
+        ('render_api_key', r'rnd_[a-zA-Z0-9]{40,}'),
+        ('railway_token', r'(?i)railway[_-]?(?:token|api[_-]?key)\s*[=:]\s*[\x22\x27]([a-f0-9]{32,})[\x22\x27]'),
+        ('statsig_secret', r'secret-[a-zA-Z0-9]{40,}'),
+        ('age_secret_key', r'AGE-SECRET-KEY-[A-Z0-9]{59}'),
+        ('flywire_key', r'FLYW[a-zA-Z0-9_\-]{30,}'),
+        ('planetscale_token', r'pscale_tkn_[a-zA-Z0-9_\-]{30,}'),
+        ('planetscale_password', r'pscale_pw_[a-zA-Z0-9_\-]{30,}'),
+        ('turso_auth_token', r'(?i)turso[_-]?(?:auth[_-]?token|token)\s*[=:]\s*[\x22\x27](eyJ[a-zA-Z0-9_\-\.]{80,})[\x22\x27]'),
+        ('neon_api_key', r'(?i)neon[_-]?(?:api[_-]?key|token)\s*[=:]\s*[\x22\x27]([a-z0-9]{32,})[\x22\x27]'),
+        ('upstash_redis_token', r'(?i)upstash[_-]?redis[_-]?(?:rest[_-]?)?token\s*[=:]\s*[\x22\x27]([a-zA-Z0-9_\-=]{30,})[\x22\x27]'),
+
+        # === OAUTH / OIDC / TENANT DISCOVERY ===
+        ('openid_config_url', r'\.well-known/openid-configuration'),
+        ('oauth_redirect_uri', r'(?i)(?:redirect_uri|callback_url|post_logout_redirect_uri)\s*[=:]\s*[\x22\x27](https?://[^\x22\x27]+)[\x22\x27]'),
+        ('azure_tenant_id', r'(?i)(?:tenant[_-]?id|AZURE_TENANT_ID)\s*[=:]\s*[\x22\x27]([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})[\x22\x27]'),
+        ('okta_domain', r'(?i)(?:okta[_-]?domain|OKTA_DOMAIN)\s*[=:]\s*[\x22\x27]([\w\-]+\.okta\.com)[\x22\x27]'),
+        ('auth0_domain', r'(?i)(?:auth0[_-]?domain|AUTH0_DOMAIN)\s*[=:]\s*[\x22\x27]([\w\-]+\.(?:us|eu|au|jp)?\.?auth0\.com)[\x22\x27]'),
+        ('cognito_pool_id', r'(?:us|eu|ap|sa|ca|me|af)-(?:east|west|south|north|central|southeast|northeast)-\d:[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}'),
+
+        # === GRAPHQL INTROSPECTION ===
+        ('graphql_introspection', r'(?:__schema|__type|introspectionQuery)'),
+
+        # === KUBERNETES / CONTAINER INFRA ===
+        ('k8s_api_internal', r'https?://kubernetes\.default(?:\.svc)?(?:\.cluster\.local)?'),
+        ('etcd_endpoint', r'https?://[a-zA-Z0-9\-\.]+:2379'),
+
+        # === SPRING BOOT / JAVA DEBUG ===
+        ('spring_actuator', r'/actuator(?:/(?:env|health|info|beans|configprops|mappings|metrics|trace|heapdump|threaddump|loggers|httptrace|shutdown|jolokia|restart|pause|resume))?(?:[?\s\x22\x27]|$)'),
+
+        # === INFRASTRUCTURE ENDPOINTS ===
+        ('rds_endpoint', r'[a-zA-Z0-9\-]+\.(?:rds|db)\.amazonaws\.com'),
+        ('elasticache_endpoint', r'[a-zA-Z0-9\-]+\.(?:cache|redis)\.amazonaws\.com'),
+        ('documentdb_endpoint', r'[a-zA-Z0-9\-]+\.docdb\.amazonaws\.com'),
+        ('cosmos_db_endpoint', r'[a-zA-Z0-9\-]+\.documents\.azure\.com'),
+        ('mongo_atlas_host', r'[a-zA-Z0-9\-]+\.mongodb\.net'),
+
+        # === MONITORING / ERROR TRACKING ===
+        ('datadog_api_key', r'(?i)(?:datadog|dd)[_-]?(?:api[_-]?key|app[_-]?key)\s*[=:]\s*[\x22\x27]([a-f0-9]{32})[\x22\x27]'),
+        ('rollbar_token', r'(?i)rollbar[_-]?(?:access[_-]?token|token)\s*[=:]\s*[\x22\x27]([a-f0-9]{32})[\x22\x27]'),
+        ('bugsnag_api_key', r'(?i)bugsnag[_-]?(?:api[_-]?key|notifier[_-]?key)\s*[=:]\s*[\x22\x27]([a-f0-9]{32})[\x22\x27]'),
+        ('logrocket_app_id', r'(?i)(?:logrocket|LogRocket)\.init\s*\(\s*[\x22\x27]([a-zA-Z0-9]{6}/[a-zA-Z0-9\-]+)[\x22\x27]'),
+        ('newrelic_license', r'(?i)(?:new[_-]?relic|NR)[_-]?(?:license[_-]?key|LICENSE_KEY)\s*[=:]\s*[\x22\x27]([a-z0-9]{40}(?:NRAL)?)[\x22\x27]'),
+        ('elastic_apm_token', r'(?i)(?:elastic[_-]?)?apm[_-]?(?:secret[_-]?token|server[_-]?secret)\s*[=:]\s*[\x22\x27]([a-zA-Z0-9_\-]{20,})[\x22\x27]'),
+
+        # === HEADLESS CMS ===
+        ('contentful_delivery_token', r'(?i)contentful[_-]?(?:delivery[_-]?token|access[_-]?token|cda[_-]?token)\s*[=:]\s*[\x22\x27]([a-zA-Z0-9_\-]{40,})[\x22\x27]'),
+        ('contentful_space_id', r'(?i)contentful[_-]?space[_-]?id\s*[=:]\s*[\x22\x27]([a-z0-9]{12})[\x22\x27]'),
+        ('sanity_project_id', r'(?i)sanity[_-]?project[_-]?id\s*[=:]\s*[\x22\x27]([a-z0-9]{8})[\x22\x27]'),
+        ('storyblok_token', r'(?i)storyblok[_-]?(?:token|api[_-]?key)\s*[=:]\s*[\x22\x27]([a-zA-Z0-9]{22,})[\x22\x27]'),
+        ('prismic_token', r'(?i)prismic[_-]?(?:access[_-]?token|token)\s*[=:]\s*[\x22\x27]([a-zA-Z0-9_\-\.]{40,})[\x22\x27]'),
+
+        # === PAYMENT PLATFORMS ===
+        ('razorpay_key_id', r'rzp_(?:live|test)_[a-zA-Z0-9]{14,}'),
+        ('flutterwave_key', r'FL(?:WPK|WSECK|WPUBK)_(?:TEST|LIVE)-[a-f0-9]{32,}'),
+        ('paystack_key', r'(?:pk|sk)_(?:live|test)_[a-f0-9]{40,}'),
+        ('mollie_api_key', r'(?:live|test)_[a-zA-Z0-9]{30,}'),
+        ('paddle_api_key', r'(?i)paddle[_-]?(?:api[_-]?key|vendor[_-]?auth[_-]?code)\s*[=:]\s*[\x22\x27]([a-f0-9]{32,})[\x22\x27]'),
+        ('lemonsqueezy_api_key', r'(?i)lemon[_-]?squeezy[_-]?(?:api[_-]?key|token)\s*[=:]\s*[\x22\x27]([a-zA-Z0-9]{40,})[\x22\x27]'),
+
+        # === MESSAGING / COMMUNICATION ===
+        ('vonage_api_key', r'(?i)(?:vonage|nexmo)[_-]?(?:api[_-]?key|api[_-]?secret)\s*[=:]\s*[\x22\x27]([a-f0-9]{8,16})[\x22\x27]'),
+        ('messagebird_key', r'(?i)messagebird[_-]?(?:api[_-]?key|access[_-]?key)\s*[=:]\s*[\x22\x27]([a-zA-Z0-9]{25})[\x22\x27]'),
+        ('pusher_key', r'(?i)(?:pusher[_-]?(?:key|app[_-]?key))\s*[=:]\s*[\x22\x27]([a-f0-9]{20})[\x22\x27]'),
+        ('pusher_secret', r'(?i)pusher[_-]?(?:secret|app[_-]?secret)\s*[=:]\s*[\x22\x27]([a-f0-9]{20})[\x22\x27]'),
+        ('ably_api_key', r'[a-zA-Z0-9_\-]{5,}\.[a-zA-Z0-9_\-]{5,}:[a-zA-Z0-9_\-+/]{10,}'),
+
+        # === MAP / GEO SERVICES ===
+        ('here_api_key', r'(?i)(?:here|HERE)[_-]?(?:api[_-]?key|app[_-]?id)\s*[=:]\s*[\x22\x27]([a-zA-Z0-9_\-]{40,})[\x22\x27]'),
+        ('tomtom_api_key', r'(?i)(?:tomtom|TOMTOM)[_-]?(?:api[_-]?key|key)\s*[=:]\s*[\x22\x27]([a-zA-Z0-9]{32})[\x22\x27]'),
+
+        # === FEATURE FLAGS ===
+        ('splitio_key', r'(?i)(?:split[_-]?io|SPLIT)[_-]?(?:api[_-]?key|sdk[_-]?key|auth[_-]?token)\s*[=:]\s*[\x22\x27]([a-zA-Z0-9]{32,})[\x22\x27]'),
+        ('flagsmith_key', r'(?i)flagsmith[_-]?(?:environment[_-]?key|api[_-]?key)\s*[=:]\s*[\x22\x27]([a-zA-Z0-9]{32,})[\x22\x27]'),
+        ('posthog_api_key', r'phc_[a-zA-Z0-9]{40,}'),
+        ('posthog_project_key', r'(?i)posthog[_-]?(?:api[_-]?key|project[_-]?key)\s*[=:]\s*[\x22\x27](phc_[a-zA-Z0-9]{40,})[\x22\x27]'),
+
+        # === HOSTING / DEPLOYMENT ===
+        ('vercel_token', r'(?i)vercel[_-]?(?:token|api[_-]?token)\s*[=:]\s*[\x22\x27]([a-zA-Z0-9]{24})[\x22\x27]'),
+        ('fly_io_token', r'(?i)fly[_-]?(?:api[_-]?token|token)\s*[=:]\s*[\x22\x27](fo1_[a-zA-Z0-9_\-]{40,})[\x22\x27]'),
+        ('convex_deploy_key', r'(?i)convex[_-]?(?:deploy[_-]?key|admin[_-]?key)\s*[=:]\s*[\x22\x27](prod:|dev:)[a-zA-Z0-9|_\-]{20,}[\x22\x27]'),
+
+        # === SEARCH / DATABASE SAAS ===
+        ('typesense_api_key', r'(?i)typesense[_-]?(?:api[_-]?key|search[_-]?only[_-]?key)\s*[=:]\s*[\x22\x27]([a-zA-Z0-9]{32,})[\x22\x27]'),
+        ('meilisearch_key', r'(?i)meili[_-]?(?:search[_-]?)?(?:master[_-]?key|api[_-]?key)\s*[=:]\s*[\x22\x27]([a-f0-9]{32,})[\x22\x27]'),
+        ('elasticsearch_api_key', r'(?i)elastic[_-]?(?:search[_-]?)?(?:api[_-]?key|cloud[_-]?id)\s*[=:]\s*[\x22\x27]([a-zA-Z0-9_\-=]{30,})[\x22\x27]'),
+
         # === DOM XSS SINKS (client-side injection points) ===
         ('xss_innerhtml', '\\.innerHTML\\s*='),
         ('xss_outerhtml', '\\.outerHTML\\s*='),
@@ -1553,6 +1648,8 @@ class BurpExtender(IBurpExtender, IScannerCheck, IHttpListener, ITab):
 
         # === CREDENTIALS IN URLS ===
         ('credentials_in_url', 'https?://[a-zA-Z0-9._%+\\-]+:.+@[a-zA-Z0-9][a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}'),
+        # Token/key embedded in URL without password (e.g. https://key@host.io/path)
+        ('token_in_url', '(?:https?|ftp|amqp|redis|mongodb|postgresql|mysql)://[a-fA-F0-9]{16,}@[a-zA-Z0-9][a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}'),
 
         # === HIDDEN/DEBUG PARAMETERS ===
         ('debug_param', '(?i)[?&](?:debug|test|testing|admin|verbose|trace|dev|staging|internal|backdoor|secret)\\s*='),
@@ -1653,18 +1750,29 @@ class BurpExtender(IBurpExtender, IScannerCheck, IHttpListener, ITab):
 
         # DSN patterns (Sentry, error tracking, etc.)
         ('js_config_dsn', '(?i)[,{\\s]([a-zA-Z0-9_]*(?:dsn|sentry_?dsn|error_?dsn|tracking_?dsn)[a-zA-Z0-9_]*)\\s*[=:]\\s*[\\x22\\x27]([^\\x22\\x27]{8,})[\\x22\\x27]'),
+        # Sentry DSN URL format: https://<key>@<org>.ingest.sentry.io/<project>
+        ('sentry_dsn_url', r'https?://[a-f0-9]{32}@[a-zA-Z0-9\-]+\.(?:ingest\.)?sentry\.io/\d+'),
 
         # Specific service keys found in JS configs
         ('adyen_client_key', '(?i)adyen[a-zA-Z0-9_]*key\\s*[=:]\\s*[\\x22\\x27]?([a-zA-Z0-9_\\-]{20,})[\\x22\\x27]?'),
         ('stripe_publishable_key', r'pk_(?:live|test)_[0-9a-zA-Z]{24,}'),
         ('stripe_secret_key', r'sk_(?:live|test)_[0-9a-zA-Z]{24,}'),
+        ('intercom_app_id', r'(?i)(?:intercom[_-]?app[_-]?id|INTERCOM_APP_ID)\s*[=:]\s*[\x22\x27]([a-zA-Z0-9]{6,})[\x22\x27]'),
+        ('launchdarkly_client_id', r'(?i)(?:launch[_-]?darkly[_-]?(?:client[_-]?id|sdk[_-]?key)|LAUNCH_DARKLY_CLIENT_ID)\s*[=:]\s*[\x22\x27]([a-f0-9]{24,})[\x22\x27]'),
+        ('meta_pixel_id', r'(?i)(?:meta[_-]?pixel[_-]?id|facebook[_-]?pixel[_-]?id|fb[_-]?pixel[_-]?id|fbq\s*\(\s*[\x22\x27]init[\x22\x27]\s*,\s*[\x22\x27])(\d{12,20})'),
+        ('mixpanel_token', r'(?i)(?:mixpanel[_-]?token|MIXPANEL_TOKEN)\s*[=:]\s*[\x22\x27]([a-f0-9]{32})[\x22\x27]'),
+        ('segment_write_key', r'(?i)(?:segment[_-]?(?:write[_-]?key|api[_-]?key)|analytics\.load)\s*[=:(]\s*[\x22\x27]([a-zA-Z0-9]{20,})[\x22\x27]'),
+        ('amplitude_api_key', r'(?i)(?:amplitude[_-]?(?:api[_-]?key|key)|AMPLITUDE_API_KEY)\s*[=:]\s*[\x22\x27]([a-f0-9]{32})[\x22\x27]'),
+        ('hotjar_id', r'(?i)(?:hotjar[_-]?(?:id|site[_-]?id)|HOTJAR_ID|hj\s*\(\s*[\x22\x27]init[\x22\x27]\s*,\s*)(\d{6,8})'),
+        ('google_tag_manager', r'GTM-[A-Z0-9]{6,8}'),
+        ('google_analytics', r'(?:UA-\d{4,10}-\d{1,4}|G-[A-Z0-9]{10,12})'),
 
         # Generic: any camelCase or snake_case key name ending in Key/Secret/Token/Password
         # with a quoted string value of 10+ chars
         ('js_generic_key', '(?i)[,{\\s]([a-zA-Z]{2,30}(?:Key|Secret|Token|Password|Credential|Passphrase))\\s*:\\s*[\\x22\\x27]([^\\x22\\x27]{10,})[\\x22\\x27]'),
 
         # Generic: snake_case versions
-        ('js_generic_snake_key', '(?i)[,{\\s]([a-zA-Z0-9]+(?:_key|_secret|_token|_password|_credential|_passphrase|_api_key|_client_id|_client_secret))\\s*[=:]\\s*[\\x22\\x27]([^\\x22\\x27]{8,})[\\x22\\x27]'),
+        ('js_generic_snake_key', '(?i)[,{\\s]([a-zA-Z0-9]+(?:_key|_secret|_token|_password|_credential|_passphrase|_api_key|_client_id|_client_secret|_app_id))\\s*[=:]\\s*[\\x22\\x27]([^\\x22\\x27]{8,})[\\x22\\x27]'),
 
         # === ESCAPED JSON-IN-JS PATTERNS ===
         # Catches \"key\":\"value\" inside JS strings (JSON embedded in JS)
@@ -1931,7 +2039,7 @@ class BurpExtender(IBurpExtender, IScannerCheck, IHttpListener, ITab):
         "linear api key", "dropbox access token", "hashicorp vault token",
         "adyen client key", "http basic auth", "authorization bearer",
         "authorization basic", "json web token", "jwt token full",
-        "firebase", "js config secret", "js config dsn",
+        "firebase", "js config secret", "js config dsn", "sentry dsn url",
         "js generic key", "js generic snake key",
         "firebase config apikey", "firebase config domain",
         "firebase config project", "firebase config bucket",
@@ -1942,7 +2050,7 @@ class BurpExtender(IBurpExtender, IScannerCheck, IHttpListener, ITab):
         "voyage ai key", "stability ai key", "cohere api key",
         "mistral api key", "deepseek api key", "together ai key",
         "pinecone api key", "azure openai key",
-        "credentials in url", "todo secret",
+        "credentials in url", "token in url", "todo secret",
         "vercel token", "netlify token", "supabase service key",
         "clerk secret key", "clerk publishable key", "postman api key",
         "doppler token", "infisical token", "supabase anon key",
@@ -1955,9 +2063,68 @@ class BurpExtender(IBurpExtender, IScannerCheck, IHttpListener, ITab):
         "code climate token", "datadog token", "fastly token", "figma token",
         "finnhub token", "gitter token", "gocardless token", "jenkins crumb",
         "pendo key", "zendesk key",
+        "launchdarkly client id", "mixpanel token", "segment write key",
+        "amplitude api key",
+        # Webhooks
+        "slack webhook", "teams webhook", "mattermost webhook",
+        "stripe webhook secret",
+        # Distinctive prefix tokens
+        "pplx api key", "dckr pat", "render api key", "railway token",
+        "statsig secret", "age secret key", "flywire key",
+        "planetscale token", "planetscale password",
+        "turso auth token", "neon api key", "upstash redis token",
+        # OAuth / OIDC
+        "azure tenant id", "cognito pool id",
+        # Monitoring / error tracking
+        "datadog api key", "rollbar token", "bugsnag api key",
+        "newrelic license", "elastic apm token",
+        # Headless CMS
+        "contentful delivery token", "storyblok token", "prismic token",
+        # Payment
+        "razorpay key id", "flutterwave key", "paystack key",
+        "paddle api key", "lemonsqueezy api key",
+        # Messaging
+        "vonage api key", "messagebird key", "pusher key", "pusher secret",
+        "ably api key",
+        # Maps / Geo
+        "here api key", "tomtom api key",
+        # Feature flags
+        "splitio key", "flagsmith key", "posthog api key", "posthog project key",
+        # Hosting
+        "vercel token", "fly io token", "convex deploy key",
+        # Search / Database SaaS
+        "typesense api key", "meilisearch key", "elasticsearch api key",
     ]
     _SEVERITY_MEDIUM = [
-        "amazon aws url", "amazon aws url2", "azure blob storage",
+        "intercom app id", "meta pixel id", "hotjar id",
+        "google tag manager", "google analytics",
+        # OAuth domains (recon, not direct secrets)
+        "okta domain", "auth0 domain",
+        "contentful space id", "sanity project id",
+        "logrocket app id",
+        # Infrastructure endpoints
+        "rds endpoint", "elasticache endpoint", "documentdb endpoint",
+        "cosmos db endpoint", "mongo atlas host",
+        "k8s api internal", "etcd endpoint", "spring actuator",
+        "graphql introspection", "openid config url",
+        "oauth redirect uri",
+        "amazon aws url", "amazon aws url2", "amazon s3 bucket",
+        "azure blob storage", "cloudflare r2 bucket", "hetzner object storage",
+        "backblaze b2 bucket", "wasabi bucket", "supabase storage",
+        "alibaba oss bucket", "tencent cos bucket", "huawei obs bucket",
+        "baidu bos bucket", "kingsoft ks3 bucket", "ucloud ufile bucket",
+        "qiniu kodo bucket", "jd cloud oss bucket", "volcengine tos bucket",
+        "china telecom oos bucket",
+        "oracle object storage", "linode object storage", "vultr object storage",
+        "scaleway object storage", "clever cloud cellar", "minio bucket",
+        "dreamhost dreamobjects", "idrive e2 bucket",
+        "yandex object storage", "selectel storage", "mailru cloud storage",
+        "nhn object storage", "kakao object storage", "naver object storage",
+        "ibm cloud object storage", "arvancloud storage",
+        "contabo object storage", "exoscale sos bucket", "cloudsigma storage",
+        "upcloud object storage", "filebase bucket", "storj bucket",
+        "ionos s3 bucket", "ovh object storage",
+        "garage s3 bucket", "seaweedfs bucket", "ceph rgw bucket",
         "google cloud storage", "firebase db url", "cloudfront url",
         "digitalocean spaces", "staging domain", "dev domain",
         "internal domain", "test domain", "sandbox domain",
@@ -2719,11 +2886,135 @@ class BurpExtender(IBurpExtender, IScannerCheck, IHttpListener, ITab):
                             ref = str(ref).strip()
                             if not ref:
                                 continue
-                            display_name = ' '.join([x.title() for x in reg_name.split('_')])
+                            # Skip IP matches inside SVG path data / coordinate strings
+                            if reg_name in ('external_ip', 'internal_ip_10', 'internal_ip_172', 'internal_ip_192', 'internal_ip_127'):
+                                ip_pos = scan_body.find(ref)
+                                if ip_pos > 0:
+                                    ctx_start = max(0, ip_pos - 40)
+                                    ctx_end = min(len(scan_body), ip_pos + len(ref) + 40)
+                                    ctx = scan_body[ctx_start:ctx_end]
+                                    # SVG path data: dense mix of decimals, commas, letters like M/L/C/Z/A/S/Q/H/V
+                                    if re.search(r'[MLCZSQAHVT]\s*[\d\.\-,]+' + re.escape(ref), ctx) or re.search(r'\d[\d\.\-,]{10,}' + re.escape(ref), ctx):
+                                        continue
+                                    # viewBox or similar SVG attributes
+                                    if re.search(r'(?i)(?:viewBox|points|d)=', ctx):
+                                        continue
+                            # Skip email matches that are part of URLs (e.g. https://key@host, ftp://user@host)
+                            if reg_name == 'email_address':
+                                at_idx = ref.find('@')
+                                local_part = ref[:at_idx] if at_idx > 0 else ref
+                                email_pos = scan_body.find(local_part + '@')
+                                if email_pos > 0:
+                                    before = scan_body[max(0, email_pos - 50):email_pos]
+                                    if '://' in before and '@' not in before:
+                                        continue
+                            # Reclassify linkfinder URLs that match known service patterns
+                            match_name = reg_name
+                            if match_name == 'linkfinder_full_url':
+                                ref_lower = ref.lower()
+                                if '.s3.amazonaws.com' in ref_lower or 's3.amazonaws.com/' in ref_lower or '.s3-' in ref_lower:
+                                    match_name = 'amazon_s3_bucket'
+                                elif '.blob.core.windows.net' in ref_lower:
+                                    match_name = 'azure_blob_storage'
+                                elif 'storage.googleapis.com' in ref_lower or 'storage.cloud.google.com' in ref_lower:
+                                    match_name = 'google_cloud_storage'
+                                elif '.cloudfront.net' in ref_lower:
+                                    match_name = 'cloudfront_url'
+                                elif '.digitaloceanspaces.com' in ref_lower:
+                                    match_name = 'digitalocean_spaces'
+                                elif '.firebaseio.com' in ref_lower or '.firebasestorage.googleapis.com' in ref_lower:
+                                    match_name = 'firebase_db_url'
+                                elif '.r2.cloudflarestorage.com' in ref_lower or '.r2.dev' in ref_lower:
+                                    match_name = 'cloudflare_r2_bucket'
+                                elif '.fsn1.your-objectstorage.com' in ref_lower or '.nbg1.your-objectstorage.com' in ref_lower or '.hel1.your-objectstorage.com' in ref_lower or '.your-objectstorage.com' in ref_lower:
+                                    match_name = 'hetzner_object_storage'
+                                elif '.backblazeb2.com' in ref_lower or '.b2.backblaze' in ref_lower:
+                                    match_name = 'backblaze_b2_bucket'
+                                elif '.wasabisys.com' in ref_lower:
+                                    match_name = 'wasabi_bucket'
+                                elif '.supabase.co/storage' in ref_lower or '.supabase.in/storage' in ref_lower:
+                                    match_name = 'supabase_storage'
+                                # Chinese cloud providers
+                                elif '.aliyuncs.com' in ref_lower:
+                                    match_name = 'alibaba_oss_bucket'
+                                elif '.myqcloud.com' in ref_lower:
+                                    match_name = 'tencent_cos_bucket'
+                                elif '.myhuaweicloud.com' in ref_lower or '.huaweicloud.com' in ref_lower:
+                                    match_name = 'huawei_obs_bucket'
+                                elif '.bcebos.com' in ref_lower:
+                                    match_name = 'baidu_bos_bucket'
+                                elif '.ksyuncs.com' in ref_lower or '.ks3-' in ref_lower:
+                                    match_name = 'kingsoft_ks3_bucket'
+                                elif '.ucloud.cn' in ref_lower or '.ufileos.com' in ref_lower:
+                                    match_name = 'ucloud_ufile_bucket'
+                                elif '.qiniucs.com' in ref_lower or '.qiniudn.com' in ref_lower or '.qbox.me' in ref_lower:
+                                    match_name = 'qiniu_kodo_bucket'
+                                elif '.jdcloud-oss.com' in ref_lower:
+                                    match_name = 'jd_cloud_oss_bucket'
+                                elif '.volces.com' in ref_lower or '.volcengine' in ref_lower:
+                                    match_name = 'volcengine_tos_bucket'
+                                elif '.ctyunapi.cn' in ref_lower or '.ctyun.cn' in ref_lower:
+                                    match_name = 'china_telecom_oos_bucket'
+                                # S3-compatible / indie providers
+                                elif '.compat.objectstorage.' in ref_lower and '.oraclecloud.com' in ref_lower:
+                                    match_name = 'oracle_object_storage'
+                                elif '.linodeobjects.com' in ref_lower:
+                                    match_name = 'linode_object_storage'
+                                elif '.vultrobjects.com' in ref_lower:
+                                    match_name = 'vultr_object_storage'
+                                elif '.scw.cloud' in ref_lower:
+                                    match_name = 'scaleway_object_storage'
+                                elif '.cellarfs.io' in ref_lower or '.cleverapps.io' in ref_lower:
+                                    match_name = 'clever_cloud_cellar'
+                                elif '.dream.io' in ref_lower or '.objects-us-east-1.dream.io' in ref_lower:
+                                    match_name = 'dreamhost_dreamobjects'
+                                elif '.idrivee2-' in ref_lower or '.idrivee2.com' in ref_lower:
+                                    match_name = 'idrive_e2_bucket'
+                                elif '.storage.yandexcloud.net' in ref_lower:
+                                    match_name = 'yandex_object_storage'
+                                elif '.selcdn.ru' in ref_lower or '.selectel.ru' in ref_lower:
+                                    match_name = 'selectel_storage'
+                                elif '.mail.ru' in ref_lower and 'storage' in ref_lower:
+                                    match_name = 'mailru_cloud_storage'
+                                elif '.obistore.com' in ref_lower or '.nhncloudservice.com' in ref_lower:
+                                    match_name = 'nhn_object_storage'
+                                elif '.kakaocloud.com' in ref_lower:
+                                    match_name = 'kakao_object_storage'
+                                elif '.ncloud.com' in ref_lower and 'objectstorage' in ref_lower:
+                                    match_name = 'naver_object_storage'
+                                elif '.object.storage.softlayer.net' in ref_lower or '.cloud-object-storage.appdomain.cloud' in ref_lower or '.objectstorage.service.networklayer.com' in ref_lower:
+                                    match_name = 'ibm_cloud_object_storage'
+                                elif '.storage.iran.liara.space' in ref_lower or '.arvancloud.ir' in ref_lower or '.arvanstorage.ir' in ref_lower:
+                                    match_name = 'arvancloud_storage'
+                                elif '.contaboserver.net' in ref_lower and 'storage' in ref_lower:
+                                    match_name = 'contabo_object_storage'
+                                elif '.exo.io' in ref_lower or '.exoscale' in ref_lower:
+                                    match_name = 'exoscale_sos_bucket'
+                                elif '.cloudsigma.com' in ref_lower:
+                                    match_name = 'cloudsigma_storage'
+                                elif '.upcloud.com' in ref_lower and 'objecto' in ref_lower:
+                                    match_name = 'upcloud_object_storage'
+                                elif '.filebase.com' in ref_lower or 'ipfs.filebase' in ref_lower:
+                                    match_name = 'filebase_bucket'
+                                elif '.storj.io' in ref_lower or 'gateway.storjshare.io' in ref_lower:
+                                    match_name = 'storj_bucket'
+                                elif '.ionoscloud.com' in ref_lower and 's3' in ref_lower:
+                                    match_name = 'ionos_s3_bucket'
+                                elif '.ovh.net' in ref_lower and ('storage' in ref_lower or 's3' in ref_lower or '.cloud.ovh.net' in ref_lower):
+                                    match_name = 'ovh_object_storage'
+                                elif 'minio' in ref_lower and (':9000' in ref_lower or ':9090' in ref_lower):
+                                    match_name = 'minio_bucket'
+                                elif '.garage.tld' in ref_lower or '.garage-s3' in ref_lower:
+                                    match_name = 'garage_s3_bucket'
+                                elif '.seaweedfs' in ref_lower:
+                                    match_name = 'seaweedfs_bucket'
+                                elif '.ceph.com' in ref_lower or 'rgw.' in ref_lower:
+                                    match_name = 'ceph_rgw_bucket'
+                            display_name = ' '.join([x.title() for x in match_name.split('_')])
                             self._addResult(url, display_name, ref, messageInfo)
                             found_count = found_count + 1
                             # Add discovered full URLs to Burp's site map (Feature 5)
-                            if reg_name == 'linkfinder_full_url':
+                            if match_name == 'linkfinder_full_url' or match_name.endswith(('_bucket', '_storage', '_url', '_spaces', '_cellar')) or match_name in ('firebase_db_url', 'cloudfront_url'):
                                 self._addToSiteMap(ref)
                     except Exception:
                         continue
