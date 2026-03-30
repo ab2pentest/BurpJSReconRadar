@@ -100,7 +100,7 @@ Built from and inspired by:
 - [KeyHacks](https://github.com/streaak/keyhacks) by streaak
 - [JS Miner](https://github.com/PortSwigger/js-miner) by PortSwigger
 - [jsluice](https://github.com/BishopFox/jsluice) by BishopFox
-- [LinkFinder](https://github.com/GerbenJav);a/LinkFinder) by Gerben Javado
+- [LinkFinder](https://github.com/GerbenJavado/LinkFinder) by Gerben Javado
 
 ## Author
 
