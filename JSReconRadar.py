@@ -1527,6 +1527,203 @@ class BurpExtender(IBurpExtender, IScannerCheck, IHttpListener, ITab):
         ('azure_openai_key', '(?i)(?:azure[_-]?openai|openai[_-]?azure)[a-zA-Z0-9_]*(?:key|secret)\\s*[=:]\\s*[\\x22\\x27]([a-f0-9]{32})[\\x22\\x27]'),
         ('pypi_token', r'pypi-[a-zA-Z0-9_\-]{50,}'),
 
+        # === GITLEAKS DISTINCTIVE-PREFIX PATTERNS ===
+        # Password managers
+        ('onepassword_secret_key', r'\bA3-[A-Z0-9]{6}-(?:[A-Z0-9]{11}|[A-Z0-9]{6}-[A-Z0-9]{5})-[A-Z0-9]{5}-[A-Z0-9]{5}-[A-Z0-9]{5}\b'),
+        ('onepassword_service_account', r'ops_eyJ[a-zA-Z0-9+/]{250,}={0,3}'),
+        # Adobe
+        ('adobe_client_secret', r'\bp8e-[a-z0-9]{32}\b'),
+        # Airtable
+        ('airtable_pat', r'\bpat[a-zA-Z0-9]{14}\.[a-f0-9]{64}\b'),
+        # Alibaba
+        ('alibaba_access_key', r'\bLTAI[a-zA-Z0-9]{20}\b'),
+        # Anthropic (specific formats)
+        ('anthropic_admin_key', r'sk-ant-admin01-[a-zA-Z0-9_\-]{93}AA'),
+        ('anthropic_api_key_v3', r'sk-ant-api03-[a-zA-Z0-9_\-]{93}AA'),
+        # Artifactory (JFrog)
+        ('artifactory_api_key', r'\bAKCp[A-Za-z0-9]{69}\b'),
+        ('artifactory_ref_token', r'\bcmVmd[A-Za-z0-9]{59}\b'),
+        # Authress
+        ('authress_service_key', r'\b(?:sc|ext|scauth|authress)_[a-z0-9]{5,30}\.[a-z0-9]{4,6}\.acc[_-][a-z0-9\-]{10,32}\.[a-z0-9+/_=\-]{30,120}'),
+        # AWS Bedrock
+        ('aws_bedrock_key', r'\bABSK[A-Za-z0-9+/]{109,269}={0,2}'),
+        # Azure AD
+        ('azure_ad_client_secret', r'[a-zA-Z0-9_~.]{3}\dQ~[a-zA-Z0-9_~.\-]{31,34}'),
+        # Beamer
+        ('beamer_api_token', r'\bb_[a-zA-Z0-9=_\-]{44}\b'),
+        # ClickHouse Cloud
+        ('clickhouse_cloud_secret', r'\b4b1d[A-Za-z0-9]{38}\b'),
+        # Clojars
+        ('clojars_token', r'CLOJARS_[a-z0-9]{60}'),
+        # Cloudflare origin CA
+        ('cloudflare_origin_ca', r'\bv1\.0-[a-f0-9]{24}-[a-f0-9]{146}\b'),
+        # Databricks
+        ('databricks_token', r'\bdapi[a-f0-9]{32}(?:-\d)?\b'),
+        # Defined Networking
+        ('defined_networking_token', r'dnkey-[a-zA-Z0-9=_\-]{26}-[a-zA-Z0-9=_\-]{52}'),
+        # DigitalOcean (additional)
+        ('digitalocean_oauth', r'\bdoo_v1_[a-f0-9]{64}\b'),
+        ('digitalocean_refresh', r'\bdor_v1_[a-f0-9]{64}\b'),
+        # Doppler
+        ('doppler_token', r'dp\.pt\.[a-zA-Z0-9]{43}'),
+        # Duffel
+        ('duffel_token', r'duffel_(?:test|live)_[a-zA-Z0-9_\-=]{43}'),
+        # Dynatrace
+        ('dynatrace_token', r'dt0c01\.[A-Z0-9]{24}\.[A-Z0-9]{64}'),
+        # EasyPost
+        ('easypost_prod_key', r'\bEZAK[a-zA-Z0-9]{54}\b'),
+        ('easypost_test_key', r'\bEZTK[a-zA-Z0-9]{54}\b'),
+        # Facebook
+        ('facebook_page_token', r'\bEAA[MC][a-zA-Z0-9]{100,}'),
+        # Flutterwave
+        ('flutterwave_pub', r'FLWPUBK(?:_TEST)?-[a-f0-9]{32}-X'),
+        ('flutterwave_sec', r'FLWSECK(?:_TEST)?-[a-f0-9]{32}-X'),
+        ('flutterwave_enc', r'FLWSECK_TEST-[a-f0-9]{12}'),
+        # Fly.io (additional formats)
+        ('flyio_fm_token', r'\bfm[12][ar]?_[a-zA-Z0-9+/]{100,}={0,3}'),
+        # Frame.io
+        ('frameio_token', r'fio-u-[a-zA-Z0-9\-_=]{64}'),
+        # GitHub (additional formats)
+        ('github_user_token', r'\bghu_[0-9a-zA-Z]{36}\b'),
+        ('github_server_token', r'\bghs_[0-9a-zA-Z]{36}\b'),
+        ('github_oauth_token', r'\bgho_[0-9a-zA-Z]{36}\b'),
+        ('github_refresh_token', r'\bghr_[0-9a-zA-Z]{36}\b'),
+        # GitLab (expanded token types)
+        ('gitlab_cicd_job_token', r'glcbt-[0-9a-zA-Z]{1,5}_[0-9a-zA-Z_\-]{20}'),
+        ('gitlab_deploy_token', r'gldt-[0-9a-zA-Z_\-]{20}'),
+        ('gitlab_feature_flag_token', r'glffct-[0-9a-zA-Z_\-]{20}'),
+        ('gitlab_feed_token', r'glft-[0-9a-zA-Z_\-]{20}'),
+        ('gitlab_incoming_mail', r'glimt-[0-9a-zA-Z_\-]{25}'),
+        ('gitlab_k8s_agent_token', r'glagent-[0-9a-zA-Z_\-]{50}'),
+        ('gitlab_oauth_app_secret', r'gloas-[0-9a-zA-Z_\-]{64}'),
+        ('gitlab_pipeline_trigger', r'glptt-[0-9a-f]{40}'),
+        ('gitlab_rrt', r'GR1348941[0-9a-zA-Z_\-]{20}'),
+        ('gitlab_runner_token', r'glrt-[0-9a-zA-Z_\-]{20}'),
+        ('gitlab_scim_token', r'glsoat-[0-9a-zA-Z_\-]{20}'),
+        # Grafana
+        ('grafana_api_key', r'\beyJrIjoi[A-Za-z0-9]{70,400}={0,3}'),
+        ('grafana_cloud_token', r'\bglc_[A-Za-z0-9+/]{32,400}={0,3}'),
+        ('grafana_service_account', r'\bglsa_[A-Za-z0-9]{32}_[A-Fa-f0-9]{8}\b'),
+        # Harness
+        ('harness_api_key', r'(?:pat|sat)\.[a-zA-Z0-9_\-]{22}\.[a-zA-Z0-9]{24}\.[a-zA-Z0-9]{20}'),
+        # Heroku v2
+        ('heroku_api_key_v2', r'\bHRKU-AA[0-9a-zA-Z_\-]{58}\b'),
+        # HuggingFace org
+        ('huggingface_org_token', r'\bapi_org_[a-z]{34}\b'),
+        # Infracost
+        ('infracost_token', r'\bico-[a-zA-Z0-9]{32}\b'),
+        # Intra42
+        ('intra42_client_secret', r's-s4t2(?:ud|af)-[a-f0-9]{64}'),
+        # MaxMind
+        ('maxmind_license', r'\b[A-Za-z0-9]{6}_[A-Za-z0-9]{29}_mmk\b'),
+        # Notion
+        ('notion_token', r'\bntn_[0-9]{11}[A-Za-z0-9]{32}[A-Za-z0-9]{3}\b'),
+        # Octopus Deploy
+        ('octopus_api_key', r'\bAPI-[A-Z0-9]{26}\b'),
+        # OpenShift
+        ('openshift_user_token', r'\bsha256~[a-zA-Z0-9_\-]{43}\b'),
+        # Plaid
+        ('plaid_access_token', r'access-(?:sandbox|development|production)-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'),
+        # PlanetScale (additional)
+        ('planetscale_oauth', r'\bpscale_oauth_[a-zA-Z0-9=\.\-]{32,64}\b'),
+        # Postman
+        ('postman_api_token', r'\bPMAK-[a-f0-9]{24}-[a-f0-9]{34}\b'),
+        # Prefect
+        ('prefect_api_token', r'\bpnu_[a-zA-Z0-9]{36}\b'),
+        # Pulumi
+        ('pulumi_api_token', r'\bpul-[a-f0-9]{40}\b'),
+        # ReadMe
+        ('readme_api_token', r'\brdme_[a-z0-9]{70}\b'),
+        # RubyGems
+        ('rubygems_token', r'\brubygems_[a-f0-9]{48}\b'),
+        # Scalingo
+        ('scalingo_token', r'\btk-us-[a-zA-Z0-9\-]{48}\b'),
+        # SendinBlue / Brevo
+        ('sendinblue_token', r'\bxkeysib-[a-f0-9]{64}-[a-zA-Z0-9]{16}\b'),
+        # Sentry (user/org tokens)
+        ('sentry_user_token', r'\bsntryu_[a-f0-9]{64}\b'),
+        ('sentry_org_token', r'\bsntrys_eyJ[a-zA-Z0-9+/=_\-]{100,}'),
+        # SettleMint
+        ('settlemint_app_token', r'\bsm_aat_[a-zA-Z0-9]{16}\b'),
+        ('settlemint_pat', r'\bsm_pat_[a-zA-Z0-9]{16}\b'),
+        ('settlemint_service_token', r'\bsm_sat_[a-zA-Z0-9]{16}\b'),
+        # Shippo
+        ('shippo_token', r'\bshippo_(?:live|test)_[a-fA-F0-9]{40}\b'),
+        # Shopify (additional)
+        ('shopify_shared_secret', r'\bshpss_[a-fA-F0-9]{32}\b'),
+        # Slack (expanded)
+        ('slack_app_token', r'xapp-\d-[A-Z0-9]+-\d-[a-z0-9]+'),
+        ('slack_bot_token', r'xoxb-[0-9]{10,13}-[0-9]{10,13}-[a-zA-Z0-9\-]+'),
+        ('slack_user_token', r'xox[pe]-(?:\d+-){3}[a-zA-Z0-9\-]{28,34}'),
+        ('slack_config_access', r'xoxe\.xox[bp]-\d-[A-Z0-9]{163,166}'),
+        ('slack_config_refresh', r'xoxe-\d-[A-Z0-9]{146}'),
+        ('slack_legacy_workspace', r'xox[ar]-(?:\d-)?[0-9a-zA-Z]{8,48}'),
+        # Sourcegraph
+        ('sourcegraph_token', r'\bsgp_(?:[a-fA-F0-9]{16}|local)_[a-fA-F0-9]{40}\b'),
+        # Sumologic
+        ('sumologic_access_id', r'\bsu[a-zA-Z0-9]{12}\b'),
+        # Twilio (already have SK-prefix covered)
+        ('twilio_sk', r'\bSK[0-9a-fA-F]{32}\b'),
+        # Typeform
+        ('typeform_token', r'\btfp_[a-zA-Z0-9\-_\.=]{59}\b'),
+        # Yandex
+        ('yandex_iam_token', r'\bt1\.[A-Z0-9a-z_\-]+=*\.[A-Z0-9a-z_\-]{86}=*'),
+        ('yandex_api_key', r'\bAQVN[A-Za-z0-9_\-]{35,38}\b'),
+        ('yandex_aws_token', r'\bYC[a-zA-Z0-9_\-]{38}\b'),
+        # Atlassian API token (ATATT3 prefix - recent format)
+        ('atlassian_api_token', r'\bATATT3[A-Za-z0-9_\-=]{186}\b'),
+        # Lob (postal API)
+        ('lob_live_key', r'\blive_[a-f0-9]{35}\b'),
+        ('lob_test_key', r'\btest_[a-f0-9]{35}\b'),
+        ('lob_pub_key', r'\b(?:live|test)_pub_[a-f0-9]{31}\b'),
+        # Mailchimp (has distinctive -us<datacenter> suffix)
+        ('mailchimp_api_key', r'\b[a-f0-9]{32}-us\d{1,2}\b'),
+        # Mailgun (additional key types)
+        ('mailgun_pub_key', r'\bpubkey-[a-f0-9]{32}\b'),
+        ('mailgun_signing_key', r'\b[a-f0-9]{32}-[a-f0-9]{8}-[a-f0-9]{8}\b'),
+        # New Relic (additional distinctive prefixes)
+        ('newrelic_browser_key', r'\bNRJS-[a-f0-9]{19}\b'),
+        ('newrelic_user_api_key', r'\bNRAK-[A-Z0-9]{27}\b'),
+        # SonarQube / SonarCloud tokens
+        ('sonar_token', r'\b(?:squ_|sqp_|sqa_)[a-z0-9=_\-]{40}\b'),
+        # Square (additional format)
+        ('square_access_token_v2', r'\b(?:EAAA|sq0atp-)[a-zA-Z0-9_\-]{22,60}\b'),
+        # Slack legacy tokens
+        ('slack_legacy_token', r'xox[os]-\d+-\d+-\d+-[a-fA-F0-9]+'),
+        ('slack_legacy_bot', r'xoxb-[0-9]{8,14}-[a-zA-Z0-9]{18,26}'),
+        # Sidekiq Enterprise URL (gems.contribsys.com creds)
+        ('sidekiq_sensitive_url', r'https?://[a-f0-9]{8}:[a-f0-9]{8}@(?:gems|enterprise)\.contribsys\.com'),
+        # Facebook access token (modern format with pipe/URL-encoded separator)
+        ('facebook_access_token_v2', r'\b\d{15,16}(?:\||%7C|%7c)[0-9a-zA-Z\-_]{27,40}\b'),
+        # Stripe (extended: includes rk_test_ and _prod_ variants)
+        ('stripe_key_extended', r'\b(?:sk|rk)_(?:test|live|prod)_[a-zA-Z0-9]{20,99}\b'),
+        # Freemius secret
+        ('freemius_secret_key', r'\bsk_[a-zA-Z0-9_\-]{29}\b'),
+        # Kubernetes sensitive tokens (base64 inline)
+        ('k8s_service_account_token', r'\beyJhbGciOi[A-Za-z0-9+/=]{100,}\.[A-Za-z0-9+/=]{100,}\.[A-Za-z0-9+/=_\-]{43}\b'),
+        # AWS access token with A3T prefix (missed in original amazon_aws_access_key_id)
+        ('aws_access_token_a3t', r'\bA3T[A-Z0-9][A-Z2-7]{16}\b'),
+        # AWS Bedrock short-lived (literal marker)
+        ('aws_bedrock_short_lived', r'bedrock-api-key-YmVkcm9jay5hbWF6b25hd3MuY29t'),
+        # Dropbox long-lived (distinctive AAAAAAAAAA marker in the middle)
+        ('dropbox_long_lived_token', r'\b[a-zA-Z0-9]{11}AAAAAAAAAA[a-zA-Z0-9\-_=]{43}\b'),
+        # GitLab PAT routable (extended format: glpat-<base>.<suffix>)
+        ('gitlab_pat_routable', r'\bglpat-[0-9a-zA-Z_\-]{27,300}\.[0-9a-z]{2}[0-9a-z]{7}\b'),
+        # GitLab runner token routable
+        ('gitlab_runner_routable', r'\bglrt-t\d_[0-9a-zA-Z_\-]{27,300}\.[0-9a-z]{2}[0-9a-z]{7}\b'),
+        # GitLab session cookie
+        ('gitlab_session_cookie', r'_gitlab_session=[0-9a-f]{32}'),
+        # Twitter Bearer token (distinctive 22 'A' prefix)
+        ('twitter_bearer_token', r'\bA{22}[a-zA-Z0-9%]{80,100}\b'),
+        # PyPI upload token (specific base64 marker after pypi-)
+        ('pypi_upload_token', r'pypi-AgEIcHlwaS5vcmc[a-zA-Z0-9_\-]{50,1000}'),
+        # JWT in base64-encoded form (base64 of "eyJ" = "ZXlK")
+        ('jwt_base64_encoded', r'\bZXlK[a-zA-Z0-9+/]{40,}={0,2}'),
+        # GoCardless live token (distinctive live_ prefix with 40 chars)
+        ('gocardless_live_token', r'\blive_[a-zA-Z0-9\-_=]{40}\b'),
+        # Mollie (Mollie payments has live_/test_ prefix with 30+ chars)
+        ('mollie_api_key', r'\b(?:live|test)_[a-zA-Z0-9]{30,}\b'),
+
         # === WEBHOOK URLS ===
         ('slack_webhook', r'https://hooks\.slack\.com/services/T[A-Z0-9]{8,}/B[A-Z0-9]{8,}/[a-zA-Z0-9]{20,}'),
         ('teams_webhook', r'https://[a-zA-Z0-9\-]+\.webhook\.office\.com/webhookb2/[a-f0-9\-]+/IncomingWebhook/[a-zA-Z0-9]+/[a-f0-9\-]+'),
@@ -2094,6 +2291,55 @@ class BurpExtender(IBurpExtender, IScannerCheck, IHttpListener, ITab):
         "vercel token", "fly io token", "convex deploy key",
         # Search / Database SaaS
         "typesense api key", "meilisearch key", "elasticsearch api key",
+        # Gitleaks distinctive prefix tokens
+        "onepassword secret key", "onepassword service account",
+        "adobe client secret", "airtable pat", "alibaba access key",
+        "anthropic admin key", "anthropic api key v3",
+        "artifactory api key", "artifactory ref token", "authress service key",
+        "aws bedrock key", "azure ad client secret", "beamer api token",
+        "clickhouse cloud secret", "clojars token", "cloudflare origin ca",
+        "databricks token", "defined networking token",
+        "digitalocean oauth", "digitalocean refresh",
+        "doppler token", "duffel token", "dynatrace token",
+        "easypost prod key", "easypost test key", "facebook page token",
+        "flutterwave pub", "flutterwave sec", "flutterwave enc",
+        "flyio fm token", "frameio token",
+        "github user token", "github server token",
+        "github oauth token", "github refresh token",
+        "gitlab cicd job token", "gitlab deploy token",
+        "gitlab feature flag token", "gitlab feed token",
+        "gitlab incoming mail", "gitlab k8s agent token",
+        "gitlab oauth app secret", "gitlab pipeline trigger",
+        "gitlab rrt", "gitlab runner token", "gitlab scim token",
+        "grafana api key", "grafana cloud token", "grafana service account",
+        "harness api key", "heroku api key v2", "huggingface org token",
+        "infracost token", "intra42 client secret", "maxmind license",
+        "notion token", "octopus api key", "openshift user token",
+        "plaid access token", "planetscale oauth", "postman api token",
+        "prefect api token", "pulumi api token", "readme api token",
+        "rubygems token", "scalingo token", "sendinblue token",
+        "sentry user token", "sentry org token",
+        "settlemint app token", "settlemint pat", "settlemint service token",
+        "shippo token", "shopify shared secret",
+        "slack app token", "slack bot token", "slack user token",
+        "slack config access", "slack config refresh", "slack legacy workspace",
+        "sourcegraph token", "sumologic access id",
+        "twilio sk", "typeform token",
+        "yandex iam token", "yandex api key", "yandex aws token",
+        "atlassian api token", "lob live key", "lob test key", "lob pub key",
+        "mailchimp api key", "mailgun pub key", "mailgun signing key",
+        "newrelic browser key", "newrelic user api key",
+        "sonar token", "square access token v2",
+        "slack legacy token", "slack legacy bot",
+        "sidekiq sensitive url", "facebook access token v2",
+        "stripe key extended", "freemius secret key",
+        "k8s service account token",
+        "aws access token a3t", "aws bedrock short lived",
+        "dropbox long lived token",
+        "gitlab pat routable", "gitlab runner routable",
+        "gitlab session cookie",
+        "twitter bearer token", "pypi upload token",
+        "jwt base64 encoded", "gocardless live token", "mollie api key",
     ]
     _SEVERITY_MEDIUM = [
         "intercom app id", "meta pixel id", "hotjar id",
