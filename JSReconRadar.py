@@ -35,9 +35,10 @@ from java.lang import Runnable, System as JavaSystem
 from java.util import ArrayList
 
 
-class BurpExtender(IBurpExtender, IScannerCheck, IHttpListener, ITab):
-    # List of tuples: (name, regex_pattern) - fixes the duplicate key bug in dict
-    regexs = [
+# ======= Pattern lists (split into chunks for Jython 64KB bytecode limit) =======
+
+def _regexs_chunk_1():
+    return [
     ('google_api', r'AIza[0-9A-Za-z-_]{35}'),
     ('firebase', r'AAAA[A-Za-z0-9_-]{7}:[A-Za-z0-9_-]{140}'),
     ('google_captcha', r'6L[0-9A-Za-z-_]{38}|^6[0-9a-zA-Z_-]{39}$'),
@@ -339,6 +340,10 @@ class BurpExtender(IBurpExtender, IScannerCheck, IHttpListener, ITab):
     ('Possible Leak', r'(?i)[\\"\\\'\\\']?dev[_-]?microsoft[_-]?account[_-]?apikey[_-]?key[_-]?auth[_-]?access[_-]?credential[\\"\\\'\\\']?[^\\\\S\\r\\n]*[=:][^\\\\S\\r\\n]*[\\"\\\'\\\']?[\\\\w-]+[\\"\\\'\\\']?'),
     ('Possible Leak', r'(?i)[\\"\\\'\\\']?dev[_-]?microsoft[_-]?account[_-]?apikey[_-]?key[_-]?auth[_-]?access[_-]?auth[\\"\\\'\\\']?[^\\\\S\\r\\n]*[=:][^\\\\S\\r\\n]*[\\"\\\'\\\']?[\\\\w-]+[\\"\\\'\\\']?'),
     ('Possible Leak', r'(?i)[\\"\\\'\\\']?dev[_-]?microsoft[_-]?account[_-]?apikey[_-]?key[_-]?auth[_-]?access[_-]?apikey[\\"\\\'\\\']?[^\\\\S\\r\\n]*[=:][^\\\\S\\r\\n]*[\\"\\\'\\\']?[\\\\w-]+[\\"\\\'\\\']?'),
+    ]
+
+def _regexs_chunk_2():
+    return [
     ('Possible Leak', r'(?i)[\\"\\\'\\\']?dev[_-]?microsoft[_-]?account[_-]?apikey[_-]?key[_-]?auth[_-]?access[_-]?access[_-]?token[\\"\\\'\\\']?[^\\\\S\\r\\n]*[=:][^\\\\S\\r\\n]*[\\"\\\'\\\']?[\\\\w-]+[\\"\\\'\\\']?'),
     ('Possible Leak', r'(?i)[\\"\\\'\\\']?dev[_-]?microsoft[_-]?account[_-]?apikey[_-]?key[_-]?auth[_-]?access[_-]?access[_-]?id[\\"\\\'\\\']?[^\\\\S\\r\\n]*[=:][^\\\\S\\r\\n]*[\\"\\\'\\\']?[\\\\w-]+[\\"\\\'\\\']?'),
     ('Possible Leak', r'(?i)[\\"\\\'\\\']?dev[_-]?microsoft[_-]?account[_-]?apikey[_-]?key[_-]?auth[_-]?access[_-]?access[_-]?credential[\\"\\\'\\\']?[^\\\\S\\r\\n]*[=:][^\\\\S\\r\\n]*[\\"\\\'\\\']?[\\\\w-]+[\\"\\\'\\\']?'),
@@ -639,6 +644,10 @@ class BurpExtender(IBurpExtender, IScannerCheck, IHttpListener, ITab):
     ('Possible Leak', r'(?i)["\\\']?microsoft[_-]?private[_-]?key[_-]?token["\\\']?[^\\\\S\\r\\n]*[=:][^\\\\S\\r\\n]*["\\\']?[\\w-]+["\\\']?'),
     ('Possible Leak', r'(?i)["\\\']?microsoft[_-]?private[_-]?key[_-]?auth[_-]?key["\\\']?[^\\\\S\\r\\n]*[=:][^\\\\S\\r\\n]*["\\\']?[\\w-]+["\\\']?'),
     ('Possible Leak', r'(?i)["\\\']?microsoft[_-]?private[_-]?key[_-]?pub[_-]?key["\\\']?[^\\\\S\\r\\n]*[=:][^\\\\S\\r\\n]*["\\\']?[\\w-]+["\\\']?'),
+    ]
+
+def _regexs_chunk_3():
+    return [
     ('Possible Leak', r'(?i)["\\\']?microsoft[_-]?private[_-]?key[_-]?priv[_-]?key["\\\']?[^\\\\S\\r\\n]*[=:][^\\\\S\\r\\n]*["\\\']?[\\w-]+["\\\']?'),
     ('Possible Leak', r'(?i)["\\\']?microsoft[_-]?private[_-]?key[_-]?secret[_-]?key["\\\']?[^\\\\S\\r\\n]*[=:][^\\\\S\\r\\n]*["\\\']?[\\w-]+["\\\']?'),
     ('Possible Leak', r'(?i)["\\\']?microsoft[_-]?private[_-]?key[_-]?secret[_-]?token["\\\']?[^\\\\S\\r\\n]*[=:][^\\\\S\\r\\n]*["\\\']?[\\w-]+["\\\']?'),
@@ -939,6 +948,10 @@ class BurpExtender(IBurpExtender, IScannerCheck, IHttpListener, ITab):
     ('Possible Leak', r'(?i)["\\\']?gitlab[_-]?token[_-]?api[_-]?key[_-]?password["\\\']?[^\\\\S\\r\\n]*[=:][^\\\\S\\r\\n]*["\\\']?[\\w-]+["\\\']?'),
     ('Possible Leak', r'(?i)["\\\']?gitlab[_-]?token[_-]?api[_-]?key[_-]?token["\\\']?[^\\\\S\\r\\n]*[=:][^\\\\S\\r\\n]*["\\\']?[\\w-]+["\\\']?'),
     ('Possible Leak', r'(?i)["\\\']?gitlab[_-]?token[_-]?api[_-]?key[_-]?auth[_-]?key["\\\']?[^\\\\S\\r\\n]*[=:][^\\\\S\\r\\n]*["\\\']?[\\w-]+["\\\']?'),
+    ]
+
+def _regexs_chunk_4():
+    return [
     ('Possible Leak', r'(?i)["\\\']?gitlab[_-]?token[_-]?api[_-]?key[_-]?pub[_-]?key["\\\']?[^\\\\S\\r\\n]*[=:][^\\\\S\\r\\n]*["\\\']?[\\w-]+["\\\']?'),
     ('Possible Leak', r'(?i)["\\\']?gitlab[_-]?token[_-]?api[_-]?key[_-]?priv[_-]?key["\\\']?[^\\\\S\\r\\n]*[=:][^\\\\S\\r\\n]*["\\\']?[\\w-]+["\\\']?'),
     ('Possible Leak', r'(?i)["\\\']?gitlab[_-]?auth[_-]?id["\\\']?[^\\\\S\\r\\n]*[=:][^\\\\S\\r\\n]*["\\\']?[\\w-]+["\\\']?'),
@@ -1239,6 +1252,10 @@ class BurpExtender(IBurpExtender, IScannerCheck, IHttpListener, ITab):
     ('Possible Leak', r'(?i)["\\\']?password[-_]?priv["\\\']?[^\\\\S\\r\\n]*[=:][^\\\\S\\r\\n]*["\\\']?[\\w-]+["\\\']?'),
     ('Possible Leak', r'(?i)["\\\']?password[-_]?prod[-_]?private["\\\']?[^\\\\S\\r\\n]*[=:][^\\\\S\\r\\n]*["\\\']?[\\w-]+["\\\']?'),
     ('Possible Leak', r'(?i)["\\\']?password[-_]?pr["\\\']?[^\\\\S\\r\\n]*[=:][^\\\\S\\r\\n]*["\\\']?[\\w-]+["\\\']?'),
+    ]
+
+def _regexs_chunk_5():
+    return [
     ('Possible Leak', r'(?i)["\\\']?password[-_]?preprod["\\\']?[^\\\\S\\r\\n]*[=:][^\\\\S\\r\\n]*["\\\']?[\\w-]+["\\\']?'),
     ('Possible Leak', r'(?i)["\\\']?password[-_]?preprod[-_]?secret["\\\']?[^\\\\S\\r\\n]*[=:][^\\\\S\\r\\n]*["\\\']?[\\w-]+["\\\']?'),
     ('Possible Leak', r'(?i)["\\\']?password[-_]?pr[-_]?live["\\\']?[^\\\\S\\r\\n]*[=:][^\\\\S\\r\\n]*["\\\']?[\\w-]+["\\\']?'),
@@ -1473,10 +1490,8 @@ class BurpExtender(IBurpExtender, IScannerCheck, IHttpListener, ITab):
     ('Possible Leak', r'(?i)[\\"\\\']?twitter[_-]?consumer[_-]?key[\\"\\\']?[^\\\\S\\r\\n]*[=:][^\\\\S\\r\\n]*[\\"\\\']?[\\w-]+[\\"\\\']?'),
     ]
 
-    # Direct-match patterns: these are matched WITHOUT the regex wrapper
-    # (no delimiter requirement). Used for URLs, endpoints, tokens with
-    # distinctive prefixes, connection strings, emails, and file references.
-    direct_regexs = [
+def _direct_regexs_chunk_1():
+    return [
         # === NEW TOKEN FORMATS (from JSAnalyzer / KeyHacks) ===
         ('github_pat_new', r'ghp_[0-9a-zA-Z]{36}'),
         ('github_pat_fine_grained', r'github_pat_[0-9a-zA-Z_]{82}'),
@@ -1775,6 +1790,10 @@ class BurpExtender(IBurpExtender, IScannerCheck, IHttpListener, ITab):
         ('bugsnag_api_key', r'(?i)bugsnag[_-]?(?:api[_-]?key|notifier[_-]?key)\s*[=:]\s*[\x22\x27]([a-f0-9]{32})[\x22\x27]'),
         ('logrocket_app_id', r'(?i)(?:logrocket|LogRocket)\.init\s*\(\s*[\x22\x27]([a-zA-Z0-9]{6}/[a-zA-Z0-9\-]+)[\x22\x27]'),
         ('newrelic_license', r'(?i)(?:new[_-]?relic|NR)[_-]?(?:license[_-]?key|LICENSE_KEY)\s*[=:]\s*[\x22\x27]([a-z0-9]{40}(?:NRAL)?)[\x22\x27]'),
+    ]
+
+def _direct_regexs_chunk_2():
+    return [
         ('elastic_apm_token', r'(?i)(?:elastic[_-]?)?apm[_-]?(?:secret[_-]?token|server[_-]?secret)\s*[=:]\s*[\x22\x27]([a-zA-Z0-9_\-]{20,})[\x22\x27]'),
 
         # === HEADLESS CMS ===
@@ -2099,6 +2118,10 @@ class BurpExtender(IBurpExtender, IScannerCheck, IHttpListener, ITab):
         ('rubygems_token', r'rubygems_[a-f0-9]{48}'),
         ('stackhawk_key', r'hawk\.[0-9A-Za-z\-_]{20}\.[0-9A-Za-z\-_]{20}'),
         ('zapier_webhook', r'https://(?:www\.)?hooks\.zapier\.com/hooks/catch/[A-Za-z0-9]+/[A-Za-z0-9]+/'),
+    ]
+
+def _direct_regexs_chunk_3():
+    return [
         ('hashicorp_tf_token', r'(?i)[a-z0-9]{14}\.atlasv1\.[a-z0-9\-_=]{60,70}'),
 
         # Contextual patterns (service name + key value)
@@ -2124,6 +2147,29 @@ class BurpExtender(IBurpExtender, IScannerCheck, IHttpListener, ITab):
         # AJAX request detection
         ('ajax_request', r'(?i)new\s+XMLHttpRequest\(\)'),
     ]
+
+_REGEXS = (
+    _regexs_chunk_1() +
+    _regexs_chunk_2() +
+    _regexs_chunk_3() +
+    _regexs_chunk_4() +
+    _regexs_chunk_5()
+)
+
+_DIRECT_REGEXS = (
+    _direct_regexs_chunk_1() +
+    _direct_regexs_chunk_2() +
+    _direct_regexs_chunk_3()
+)
+
+class BurpExtender(IBurpExtender, IScannerCheck, IHttpListener, ITab):
+    # List of tuples: (name, regex_pattern) - fixes the duplicate key bug in dict
+    regexs = _REGEXS
+
+    # Direct-match patterns: these are matched WITHOUT the regex wrapper
+    # (no delimiter requirement). Used for URLs, endpoints, tokens with
+    # distinctive prefixes, connection strings, emails, and file references.
+    direct_regexs = _DIRECT_REGEXS
 
     regex = r"[:|=|\'|\"|\s*|`|\xb4| |,|?=|\]|\|//|/\*}](%%regex%%)[:|=|\'|\"|\s*|`|\xb4| |,|?=|\]|\}|&|//|\*/]"
     issuename = "JSReconRadar: %s"
