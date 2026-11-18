@@ -2260,7 +2260,7 @@ class BurpExtender(IBurpExtender, IScannerCheck, IHttpListener, ITab):
         except Exception:
             print(msg)
 
-    def _getLogHost(self, url):
+    def _get_log_host(self, url):
         """Return only the hostname for logs, never URL paths or query strings."""
         try:
             return str(url.getHost())
@@ -3005,7 +3005,7 @@ class BurpExtender(IBurpExtender, IScannerCheck, IHttpListener, ITab):
             self._countLabel.setText("  Results: %d" % row_num)
             self._updateStatsLabel()
 
-            self._log("[+] [%s] %s -> %s : [value redacted]" % (severity, self._getLogHost(url), secret_type))
+            self._log("[+] [%s] %s -> %s : [value redacted]" % (severity, self._get_log_host(url), secret_type))
         except Exception:
             self._log("[!] _addResult error: %s" % traceback.format_exc())
 
@@ -3106,7 +3106,7 @@ class BurpExtender(IBurpExtender, IScannerCheck, IHttpListener, ITab):
 
             # Skip responses over 5MB
             if len(response) > self._MAX_RESPONSE_SIZE:
-                self._log("[*] Skipped %s (%.1f MB > 5MB limit)" % (self._getLogHost(url), len(response) / 1048576.0))
+                self._log("[*] Skipped %s (%.1f MB > 5MB limit)" % (self._get_log_host(url), len(response) / 1048576.0))
                 return
 
             # Skip binary file types
@@ -3156,7 +3156,7 @@ class BurpExtender(IBurpExtender, IScannerCheck, IHttpListener, ITab):
             if resp_len < 10:
                 return
 
-            self._log("[*] Scanning: %s (%d bytes)" % (self._getLogHost(url), resp_len))
+            self._log("[*] Scanning: %s (%d bytes)" % (self._get_log_host(url), resp_len))
             found_count = 0
 
             # Also scan an unescaped version of the response
@@ -3365,10 +3365,10 @@ class BurpExtender(IBurpExtender, IScannerCheck, IHttpListener, ITab):
                     continue
 
             if found_count > 0:
-                self._log("[+] Found %d matches in %s" % (found_count, self._getLogHost(url)))
+                self._log("[+] Found %d matches in %s" % (found_count, self._get_log_host(url)))
 
         except Exception:
-            self._log("[!] Scan error for %s:\n%s" % (self._getLogHost(url), traceback.format_exc()))
+            self._log("[!] Scan error for %s:\n%s" % (self._get_log_host(url), traceback.format_exc()))
         finally:
             self._lock.acquire()
             try:
